@@ -1,0 +1,20 @@
+#include <stdio.h>	
+#include <unistd.h>
+#include <signal.h>
+#include <errno.h>
+	
+void handler(int sig) {
+    // Just print something for demonstration
+    printf("Signal %d received\n", sig);
+}
+
+int main() {
+    signal(SIGINT, handler); // Set up signal handler
+    char *data = "Hello\n";
+    ssize_t result = write(1, data, 6); // writing to stdout
+    if (result == -1 && errno == EINTR) {
+        perror("write was interrupted by signal");
+    } else {
+        printf("write completed, wrote %zd bytes\n", result);
+    }
+    return 0;
